@@ -1,5 +1,16 @@
 <script lang="ts">
+  import { onMount, createEventDispatcher } from "svelte";
+    const dispatch = createEventDispatcher();
     export let command = "";
+
+    onMount(() => {
+        if (window) window.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") {
+                dispatch("command", command);
+                command = "";
+            }
+        });
+    });
 </script>
 
 <div id="command-input">

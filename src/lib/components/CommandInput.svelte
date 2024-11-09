@@ -1,50 +1,33 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from "svelte";
-    const dispatch = createEventDispatcher();
-    export let command = "";
-
-    onMount(() => {
-        if (window) window.addEventListener("keydown", (e) => {
-            if (e.key === "Enter") {
-                dispatch("command", command);
-                command = "";
-            }
-        });
-    });
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
+  export let command = "";
+  let lastCommand = "";
 </script>
 
-<div id="command-input">
-    <label>visitor@longph.com:~$</label><input type="text" bind:value={command}/>
+<div class="space-x-2 flex !flex-row">
+  <label for="command" class="!text-[forestgreen] font-bold"
+    >visitor@longph.com:~$</label
+  ><input
+    class="bg-[#151515] border-none text-[#73abad] font-bold outline-none overflow-scroll"
+    autofocus={true}
+    name="command"
+    autocomplete="off"
+    type="text"
+    bind:value={command}
+    on:keydown={(e) => {
+      if (e.key === "Enter") {
+        lastCommand = command;
+        dispatch("command", command);
+        command = "";
+      }
+      if (e.key === "ArrowUp") {
+        console.log("ArrowUp, ", lastCommand);
+        e.preventDefault();
+        command = lastCommand;
+        dispatch("command", command);
+        lastCommand = command;
+      }
+    }}
+  />
 </div>
-
-<style>
-    label {
-        color: forestgreen;
-        font-size: 15px;
-        font-weight: bold;
-    }
-
-    input {
-        font-family: Consolas, Consolas Bold, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
-        background: transparent;
-        border: none;
-        color: #73ABAD;
-        font-size: 15px;
-        font-weight: bold;
-        outline: none;
-        width: 600px;
-        margin: 0 10px 0 10px;
-    }
-
-    #command-input {
-        position: relative;
-        left: 10px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: flex-start;
-        width: 100%;
-        height: 100%;
-        padding: 0 10px;
-    }
-</style>
